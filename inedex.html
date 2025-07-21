@@ -1,0 +1,180 @@
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <title>5 Dobbelstenen met Afbeeldingen</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #AAAAf7;
+      padding: 2em;
+    }
+    .dice-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 2em;
+    }
+    .die {
+      width: 80px;
+      height: 80px;
+      border: 0px solid black;
+      border-radius: 0px;
+      background-color: #AAAAF7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .die img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 6px;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 0.5em 1.5em;
+      margin-top: 1em;
+      cursor: pointer;
+      border: 3px solid black;
+      border-radius: 8px;
+      color: black;
+    }
+    .gooi-knop-groen {
+      background-color: green;
+      color: white;
+    }
+    .gooi-knop-oranje {
+      background-color: orange;
+      color: black;
+    }
+    .results {
+      margin-top: 2em;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  
+  <button id="gooiKnop" class="gooi-knop-groen" onclick="startDobbel()">Gooi de dobbelsteen</button>
+
+  <div class="dice-container">
+    <div id="die1" class="die"><img src="geel0.jpg" alt="Geel"></div>
+    <div id="die2" class="die"><img src="blauw10.jpg" alt="Blauw1"></div>
+    <div id="die3" class="die"><img src="blauw22.jpg" alt="Blauw2"></div>
+    <div id="die4" class="die"><img src="groen10.jpg" alt="Groen1"></div>
+    <div id="die5" class="die"><img src="groen22.jpg" alt="Groen2"></div>
+  </div>
+
+  <div class="results">
+    <p><strong>Mogelijke uitkomsten:</strong></p>
+    <div id="output"></div>
+  </div>
+
+  <script>
+    const intervalIds = [];
+    const stopDelays = [500, 1000, 1500, 2000, 2500]; // ms per dobbelsteen
+    const options = {
+      geel: [0, 1, 2, 3],
+      blauw1: [0, 1, 3, 5],
+      blauw2: [2, 4, 6, 8],
+      groen1: [0, 1, 3, 5],
+      groen2: [2, 4, 6, 8]
+    };
+
+    const dobbelstenen = [
+      { id: 'die1', naam: 'geel', opties: options.geel },
+      { id: 'die2', naam: 'blauw1', opties: options.blauw1 },
+      { id: 'die3', naam: 'blauw2', opties: options.blauw2 },
+      { id: 'die4', naam: 'groen1', opties: options.groen1 },
+      { id: 'die5', naam: 'groen2', opties: options.groen2 }
+    ];
+
+    let rolling = false;
+
+    function startDobbel() {
+      if (rolling) {
+        stopDobbel();
+        return;
+      }
+
+      rolling = true;
+      const knop = document.getElementById("gooiKnop");
+      knop.innerText = "STOP";
+      knop.classList.remove("gooi-knop-groen");
+      knop.classList.add("gooi-knop-oranje");
+
+      dobbelstenen.forEach((dobbel, index) => {
+        const img = document.getElementById(dobbel.id).firstElementChild;
+        intervalIds[index] = setInterval(() => {
+          const waarde = dobbel.opties[Math.floor(Math.random() * dobbel.opties.length)];
+          img.src = `${dobbel.naam}${waarde}.jpg`;
+          img.setAttribute("data-value", waarde); // opslaan voor later
+        }, 100);
+      });
+    }
+
+    function stopDobbel() {
+      const knop = document.getElementById("gooiKnop");
+      knop.disabled = true;
+
+      dobbelstenen.forEach((dobbel, index) => {
+        setTimeout(() => {
+          clearInterval(intervalIds[index]);
+        }, stopDelays[index]);
+      });
+
+      // Laatste dobbelsteen stopt na 2.5 seconden → toon dan resultaat
+setTimeout(() => {
+  toonResultaat();
+}, 2500);
+
+// Reset knop na 8 seconden
+setTimeout(() => {
+  rolling = false;
+  knop.innerText = "Gooi de dobbelsteen";
+  knop.classList.remove("gooi-knop-oranje");
+  knop.classList.add("gooi-knop-groen");
+  knop.disabled = false;
+}, 8000);
+
+    }
+
+    function toonResultaat() {
+      const waarden = dobbelstenen.map(d => {
+        const img = document.getElementById(d.id).firstElementChild;
+        return parseInt(img.getAttribute("data-value") || "0");
+      });
+
+      const geel = waarden[0];
+      const t1 = waarden[1], t2 = waarden[2];
+      const e1 = waarden[3], e2 = waarden[4];
+
+      const tientallen = getTientallenOptions(t1, t2);
+      const eenheden = getTientallenOptions(e1, e2);
+
+      let mogelijkheden = [];
+      tientallen.forEach(t => {
+        eenheden.forEach(e => {
+          mogelijkheden.push(100 * geel + 10 * t + e);
+        });
+      });
+
+      document.getElementById("output").innerText = mogelijkheden.length > 0
+        ? mogelijkheden.join(', ')
+        : "Geen geldige combinaties";
+    }
+
+    function getTientallenOptions(a, b) {
+      let results = [];
+      if (a + b <= 10) results.push(a + b);
+      if (a - b >= 0) results.push(a - b);
+      if (b - a >= 0) results.push(b - a);
+      if (a <= 10) results.push(a);
+      if (b <= 10) results.push(b);
+      return [...new Set(results)].sort((x, y) => x - y);
+    }
+  </script>
+</body>
+</html>
