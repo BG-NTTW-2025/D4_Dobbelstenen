@@ -184,7 +184,7 @@ let regels = [];
 let regel = '';
 
 tekst.split(', ').forEach((getal) => {
-  if ((regel + getal).length > 30) {
+  if ((regel + getal).length > 25) {
     regels.push(regel.trim());
     regel = '';
   }
