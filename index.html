@@ -11,24 +11,28 @@
       background: #AAAAf7;
       padding: 1em;
     }
-.dice-container {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.5em;
-  margin-top: 1em;
-}
 
-/* dobbelstenen dynamisch laten schalen */
-.die {
-  flex: 0 1 auto;     /* geen verplichte breedte */
-  margin: 0.2em;      /* beetje ruimte */
-}
+    /* ----- D4 Dobbelstenen ----- */
+    .dice-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5em;
+      margin-top: 1em;
+    }
+
+    .die {
+      width: 90px;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
 .die img {
-  max-width: 90px;   /* bovenlimiet */
-  width: 100%;       /* past zich aan container aan */
-  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 1px;
 }
 
 
