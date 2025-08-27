@@ -35,9 +35,6 @@
   border-radius: 1px;
 }
 
-
-
-
     button {
       font-size: 1.2em;
       padding: 0.5em 1.5em;
@@ -59,6 +56,14 @@
       margin-top: 0em;
       font-size: 1.5em;
     }
+	
+	#output {
+  word-wrap: break-word;
+  white-space: normal;
+  display: block;
+  max-width: 100%;
+}
+
 
   </style></head><body>
   	<p id="last-updated" style="text-align: center; font-size: 0.9em; color: gray;"></p>
@@ -144,7 +149,7 @@ setTimeout(() => {
   knop.classList.remove("gooi-knop-oranje");
   knop.classList.add("gooi-knop-groen");
   knop.disabled = false;
-}, 8000);
+}, 4000);
 
     }
 
@@ -211,6 +216,4 @@ document.getElementById("output").innerText = regels.join('\n');
     "Laatste update: " + datum + " om " + tijd;
 </script>
 
-
 </body></html>
-
